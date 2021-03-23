@@ -7,7 +7,6 @@ qwave
 
 Quantum and Statistical mechanics solver
 
-test test
 
 ### Copyright
 
