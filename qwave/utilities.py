@@ -43,13 +43,20 @@ def pes(pot_func,grid,box_length):
 
     return pot_exp
 
-def sort_energy(eigval, eigvec, len_eigval):
+def sort_energy(eigval,len_eigval):
     indices = np.argsort(eigval)
-    indices = indices[:len_eigval] # limits the numbner of eigenvalues
+    indices = indices[:len_eigval] # limits the number of eigenvalues
     energies = eigval[indices]
-    wavefunc = eigvec[indices]
     
-    return energies, wavefunc
+    return energies
+
+def sort_wave(energy,eigval,wave):
+    psi = []
+    order = np.argsort(eigval)
+    for i in range(len(energy)):
+        psi.append(wave[:, order[i]] + energy[i])  #Corresponding component of eigenvector (value of wavefunction)
+
+    return psi
 
 def energy_conv(energy,unit):
     if unit == 'J':

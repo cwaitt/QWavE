@@ -46,7 +46,9 @@ def schrodinger_box(box_length,mass,pot_func='PIAB',
 
     eigval, eigvec = np.linalg.eig(H)                   # Diagonalize Hamiltonian for eigenvectors
 
-    energy,wavefunc = sort_energy(eigval,eigvec,len_eigval)             # Sort the values from lowest to highest 
+    energy = sort_energy(eigval,len_eigval)             # Sort the values from lowest to highest 
+    #wavefunc = eigvec
+    wavefunc = sort_wave(energy,eigval,eigvec)
 
     if unit != None:
         energy = energy_conv(energy,unit)               # convert the energy to other units
