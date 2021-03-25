@@ -7,7 +7,6 @@ qwave
 
 Quantum and Statistical mechanics solver
 
-
 ### Copyright
 
 Copyright (c) 2021, Craig Waitt
