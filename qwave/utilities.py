@@ -18,7 +18,7 @@ def ngrid(box_length,grid_points):
 
     return grid, dgrid
 
-def pes(pot_func,grid,box_length):
+def pes(pot_func,grid,box_length,fit_type='not-a-knot'):
     global pot_exp
     if pot_func == 'PIAB':
         pot_exp = 0
@@ -37,7 +37,7 @@ def pes(pot_func,grid,box_length):
                 xdata = np.append(xdata,float(row[0]))
                 ydata = np.append(ydata, float(row[1]))
 
-        cs = CubicSpline(xdata,ydata)
+        cs = CubicSpline(xdata,ydata,bc_type=fit_type)
 
         pot_exp = cs(grid)
 

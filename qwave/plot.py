@@ -16,6 +16,8 @@ def plot_se(grid,energy,wavefunc,V,box_length):
     for i in range(len(energy)):
         energy_plot = np.repeat(energy[i],len(grid))
         plt.plot(grid,energy_plot,'-',color='black')
+
+    #plt.ylim(-0.01,energy[-1])
     plt.show()
 
 

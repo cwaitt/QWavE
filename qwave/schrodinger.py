@@ -31,14 +31,14 @@ from .utilities import *
 from .hamiltonian import *
 from .plot import *
 
-def schrodinger_box(box_length,mass,pot_func='PIAB',
+def schrodinger_box(box_length,mass,pot_func='PIAB',fit_type='not-a-knot',
         grid_points=101,len_eigval=10,unit=None,plot=False):
 
     grid,dgrid = ngrid(box_length,grid_points)
 
     C = -1/(2*mass*dgrid**2)                        # evaluate the constant of the kinetic energy operator
 
-    V = eval_pot(grid_points,grid,box_length,pot_func)  # evaluate the potential energy operator
+    V = eval_pot(grid_points,grid,box_length,pot_func,fit_type)  # evaluate the potential energy operator
 
     T = eval_kin(grid_points)                           # evaluate the kinetic energy operator
 
@@ -47,7 +47,6 @@ def schrodinger_box(box_length,mass,pot_func='PIAB',
     eigval, eigvec = np.linalg.eig(H)                   # Diagonalize Hamiltonian for eigenvectors
 
     energy = sort_energy(eigval,len_eigval)             # Sort the values from lowest to highest 
-    #wavefunc = eigvec
     wavefunc = sort_wave(energy,eigval,eigvec)
 
     if unit != None:
@@ -58,4 +57,32 @@ def schrodinger_box(box_length,mass,pot_func='PIAB',
         plot_se(grid,energy,wavefunc,V,box_length)
 
     return energy, wavefunc
-   
+  
+def schrodinger_HO(box_length,mass,frequency,
+        grid_points=101,len_eigval=10,unit='None',plot=False):
+
+    grid,dgrid = ngrid(box_length,grid_points)
+
+    C = -1/(2*mass*dgrid**2)
+
+    V = eval_pot_HO(frequency,grid_points,grid,mass)
+
+    T = eval_kin(grid_points)
+
+    H = (C*T) + V
+
+    eigval, eigvec = np.linalg.eig(H)
+
+    energy = sort_energy(eigval,len_eigval)
+    wavefunc = sort_wave(energy,eigval,eigvec)
+
+    if unit != None:
+        energy = energy_conv(energy,unit)
+        V = energy_conv(V,unit)
+
+    if plot==True:
+        plot_se(grid,energy,wavefunc,V,box_length)
+
+    return energy, wavefunc
+
+
