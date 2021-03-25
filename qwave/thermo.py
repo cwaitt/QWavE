@@ -49,6 +49,7 @@ def free_A_S(q,temp,unit):
     for i in temp:
         S.append(derivative(cs,i)*-1)
     
+    S = np.array(S)
 
     return A,S
 

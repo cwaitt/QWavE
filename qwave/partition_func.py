@@ -44,7 +44,7 @@ def q_PESq(ei,temp,unit):
 
         q_tot.append(q_temp)
 
-    np.array(q_tot)
+    q_tot=np.array(q_tot)
 
     return q_tot
 
@@ -80,6 +80,6 @@ def q_HO(freq,temp,unit):
 
         q_tot.append(q_temp)
 
-    np.array(q_tot)
+    q_tot = np.array(q_tot)
 
     return q_tot
