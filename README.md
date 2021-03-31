@@ -16,7 +16,7 @@ QWavE is fairly simple to install.
 1) Fork the repository to your own Github account
 2) Clone your repository to your local environment
 3) Place a copy of QWavE onto your python path
-4) To use any QWavE module, simply type "from qwave import qwave" and all the modules should be available to you
+4) To use any QWavE module, simply type "from QWavE import qwave" and all the modules should be available to you
 
 ### Usage
 QWavE has been designed for ease of use. Several example on how to use the modules are shown via juypter notebooks. QWave is not complete as more modules are being added.
