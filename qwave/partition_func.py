@@ -105,12 +105,11 @@ def q_HT(Vb,ax,mass,temp,unit):
     qzpe = []
 
     for j in Tx:
-        qclass.append(np.sqrt((np.pi*rx/j)*np.exp(-1*rx/j))*(np.i0(rx/(2*j))))
+        qclass.append(np.sqrt((np.pi*rx/j))*np.exp(-1*rx/(2*j))*(np.i0(rx/(2*j))))
         qHO.append(np.exp(-1/(2*j))/(1-np.exp(-1/j)))
         qzpe.append(np.exp(1/((2+(16*rx))*j)))
 
-    q_tot = np.array(qclass) * np.array(qHO) * np.array(qzpe)
-
+    q_tot = np.array(qclass)*np.array(qHO)*np.array(qzpe)
     return q_tot
 
 
