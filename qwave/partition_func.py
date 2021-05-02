@@ -19,8 +19,12 @@ plot (optional):
 from scipy import constants
 import numpy as np
 
-# load internal modules
+#load internal modules
 from .plot import *
+
+eV_to_J = constants.physical_constants['electron volt-joule relationship'][0]
+
+bohr_to_m = constants.physical_constants['Bohr radius'][0]
 
 def q_PESq(ei,temp,unit):
 
@@ -81,6 +85,60 @@ def q_HO(freq,temp,unit):
         q_tot.append(q_temp)
 
     q_tot = np.array(q_tot)
+
+    return q_tot
+
+def q_HT(Vb,ax,mass,temp,unit):
+
+
+
+    if unit == 'eV':
+
+        kb = constants.physical_constants['Boltzmann constant in eV/K'][0]
+
+        h = constants.physical_constants['Planck constant in eV s'][0]
+
+    else:
+
+        raise ValueError('Unit must be eV')
+
+
+
+    print('Warning: make sure mass is in kg and ax is in bohr')
+
+
+
+    vx = ((Vb*eV_to_J)/(2*mass*(ax*bohr_to_m)**2))**0.5 # freqeuncy
+
+
+
+    rx = Vb/(h*vx)
+
+
+
+    Tx = (kb*temp)/(h*vx)
+
+
+
+    qclass = []
+
+    qHO = []
+
+    qzpe = []
+
+
+
+    for j in Tx:
+
+        qclass.append(np.sqrt((np.pi*rx/j))*np.exp(-1*rx/(2*j))*(np.i0(rx/(2*j))))
+
+        qHO.append(np.exp(-1/(2*j))/(1-np.exp(-1/j)))
+
+        qzpe.append(np.exp(1/((2+(16*rx))*j)))
+
+
+
+    q_tot = np.array(qclass)*np.array(qHO)*np.array(qzpe)
 
     return q_tot
 
