@@ -58,18 +58,6 @@ def sort_wave(energy,eigval,wave):
 
     return psi
 
-def energy_conv(energy,unit):
-    if unit == 'J':
-        new_e = energy * constants.physical_constants['Hartree energy'][0]
-    elif unit =='kJ/mol':
-        new_e = energy * constants.physical_constants['Hartree energy'][0]/1000/constants.N_A
-    elif unit == 'eV':
-        new_e = energy * constants.physical_constants['Hartree energy in eV'][0]
-    else:
-        raise ValueError('Unit must be J, kJ/mol, or eV')
-
-    return new_e
-
 def derivative(f,a,method='central',h=0.1):
     if method == 'central':
         return (f(a + h) - f(a - h))/(2*h)

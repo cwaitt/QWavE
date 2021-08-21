@@ -32,7 +32,7 @@ from .hamiltonian import *
 from .plot import *
 
 def schrodinger_box(box_length,mass,pot_func='PIAB',fit_type='not-a-knot',
-        grid_points=101,len_eigval=10,unit=None,plot=False):
+        grid_points=101,len_eigval=10):
 
     grid,dgrid = ngrid(box_length,grid_points)
 
@@ -49,17 +49,10 @@ def schrodinger_box(box_length,mass,pot_func='PIAB',fit_type='not-a-knot',
     energy = sort_energy(eigval,len_eigval)             # Sort the values from lowest to highest 
     wavefunc = sort_wave(energy,eigval,eigvec)
 
-    if unit != None:
-        energy = energy_conv(energy,unit)               # convert the energy to other units
-        V = energy_conv(V,unit)
-
-    if plot == True:
-        plot_se(grid,energy,wavefunc,V,box_length)
-
     return energy, wavefunc
   
 def schrodinger_HO(box_length,mass,frequency,
-        grid_points=101,len_eigval=10,unit='None',plot=False):
+        grid_points=101,len_eigval=10):
 
     grid,dgrid = ngrid(box_length,grid_points)
 
@@ -75,13 +68,6 @@ def schrodinger_HO(box_length,mass,frequency,
 
     energy = sort_energy(eigval,len_eigval)
     wavefunc = sort_wave(energy,eigval,eigvec)
-
-    if unit != None:
-        energy = energy_conv(energy,unit)
-        V = energy_conv(V,unit)
-
-    if plot==True:
-        plot_se(grid,energy,wavefunc,V,box_length)
 
     return energy, wavefunc
 
