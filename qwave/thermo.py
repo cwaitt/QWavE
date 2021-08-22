@@ -20,7 +20,6 @@ from scipy import constants
 from scipy.interpolate import CubicSpline
 
 # load internal modules
-from .plot import *
 from .utilities import *
 
 def free_A_S(q,temp,unit):

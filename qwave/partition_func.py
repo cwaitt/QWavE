@@ -19,9 +19,6 @@ plot (optional):
 from scipy import constants
 import numpy as np
 
-#load internal modules
-from .plot import *
-
 eV_to_J = constants.physical_constants['electron volt-joule relationship'][0]
 
 bohr_to_m = constants.physical_constants['Bohr radius'][0]

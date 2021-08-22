@@ -29,7 +29,6 @@ plot (optional):
 # load internal modules
 from .utilities import *
 from .hamiltonian import *
-from .plot import *
 
 def schrodinger_box(box_length,mass,pot_func='PIAB',fit_type='not-a-knot',
         grid_points=101,len_eigval=10):
