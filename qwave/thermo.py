@@ -22,6 +22,15 @@ from scipy.interpolate import CubicSpline
 # load internal modules
 from .utilities import *
 
+kb_default = constants.physical_constants['kelvin-hartree relationship'][0]
+
+def free_A(q,temp,kb):
+
+    A = -1*kb*temp*np.log(q)
+
+    return A
+
+
 def free_A_S(q,temp,unit):
 
     if unit == 'Hartree':

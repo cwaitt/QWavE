@@ -68,6 +68,6 @@ def schrodinger_HO(box_length,mass,frequency,
     energy = sort_energy(eigval,len_eigval)
     wavefunc = sort_wave(energy,eigval,eigvec)
 
-    return energy, wavefunc
+    return np.array(energy), np.array(wavefunc)
 
 

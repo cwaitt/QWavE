@@ -7,6 +7,7 @@ A SE solver for simple models such as a particle in a box and complicated models
 from .schrodinger import *
 from .partition_func import *
 from .thermo import *
+from .statistics import *
 
 # Handle versioneer
 from ._version import get_versions
