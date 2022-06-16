@@ -3,9 +3,9 @@ schrodinger.py
 A SE solver for models such as the particle in the box and complicated models for an arbitrary potential
 
 Handles the primary functions
-box_length: 
+box_length:
     length of the box to evaluate the SE (must be in a.u.)
-mass 
+mass:
     mass of the particle in the box (must be in a.u.)
 pot_func:
     supply your own potential energy functional or use a preset functional (default = Particle in a Box (PIAB))
@@ -23,7 +23,7 @@ unit (optional):
         J
         eV
 plot (optional):
-    function that can be set to True to plot out the solutions to the SE with respesct to the potential
+    variable that can be set to True to plot out the solutions to the SE with respesct to the potential
 """
 
 # load internal modules
@@ -37,9 +37,9 @@ def schrodinger_box(box_length,mass,pot_func='PIAB',fit_type='not-a-knot',
 
     C = -1/(2*mass*dgrid**2)                        # evaluate the constant of the kinetic energy operator
 
-    V = eval_pot(grid_points,grid,box_length,pot_func,fit_type)  # evaluate the potential energy operator
+    V = calculate_potential(grid_points,grid,box_length,pot_func,fit_type)  # evaluate the potential energy operator
 
-    T = eval_kin(grid_points)                           # evaluate the kinetic energy operator
+    T = calculate_kinetic(grid_points)                           # evaluate the kinetic energy operator
 
     H = (C*T) + V
 
@@ -57,9 +57,9 @@ def schrodinger_HO(box_length,mass,frequency,
 
     C = -1/(2*mass*dgrid**2)
 
-    V = eval_pot_HO(frequency,grid_points,grid,mass)
+    V = calculate_HO_potential(frequency,grid_points,grid,mass)
 
-    T = eval_kin(grid_points)
+    T = calculate_kinetic(grid_points)
 
     H = (C*T) + V
 
@@ -69,5 +69,3 @@ def schrodinger_HO(box_length,mass,frequency,
     wavefunc = sort_wave(energy,eigval,eigvec)
 
     return np.array(energy), np.array(wavefunc)
-
-
