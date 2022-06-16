@@ -16,57 +16,46 @@ unit:
         eV
 """
 # load modules
-from scipy import constants
 from scipy.interpolate import CubicSpline
+import numpy as np
 
 # load internal modules
-from .utilities import *
+from qwave.utilities import derivative
+from qwave.units import kb_unit_dict
 
-kb_default = constants.physical_constants['kelvin-hartree relationship'][0]
 
 def free_A(q, temperature, kb):
     return -kb * temperature * np.log(q)
 
 
-def free_A_S(q, temperature, unit):
+def free_A_S(partition_func, temperatures, unit):
 
-    if unit == 'Hartree':
-        kb = constants.physical_constants['Boltzmann constant in eV/K'][0]/constants.physical_constants['Hartree energy in eV'][0]
-
-    elif unit == 'eV':
-        kb = constants.physical_constants['Boltzmann constant in eV/K'][0]
-
-    elif unit == 'J':
-        kb = constants.physical_constants['Boltzmann constant'][0]
-
-    elif unit == 'kJ/mol':
-        kb = constants.physical_constants['Boltzmann constant'][0]/1000/constants.N_A
-
-    else:
+    try:
+        kb = kb_unit_dict[unit]
+    except KeyError:
         raise ValueError('Unit must be Hartree, eV, J, or kJ/mol')
 
 
-    A = free_A(q, temperature, kb)
+    A = free_A(partition_func, temperatures, kb)
 
-    cubic_spline = CubicSpline(temperature, A)
+    cubic_spline = CubicSpline(temperatures, A)
 
-    S = np.array([-derivative(cubic_spline, temp) for temp in temperature])
+    S = np.array([-derivative(cubic_spline, temp) for temp in temperatures])
 
     return A, S
 
-def free_A_p(q, temperature, volume, unit='J'):
+def free_A_p(partition_func: np.ndarray, temperatures, volumes, unit='J'):
 
     if unit == 'J':
-        kb = constants.physical_constants['Boltzmann constant'][0]
+        kb = kb_unit_dict[unit]
     else:
         raise ValueError('Module designed only if free energy is in Joules')
 
-    A = free_A(q, temperature, kb)
+    A = free_A(partition_func, temperatures, kb)
 
-    cubic_spline = CubicSpline(temperature, A)
+    cubic_spline = CubicSpline(temperatures, A)
 
-    p = np.array([derivative(cubic_spline,vol) for vol in volume])
+    p = np.array([derivative(cubic_spline,vol) for vol in volumes])
 
     return A, p
 
-   

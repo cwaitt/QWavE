@@ -9,39 +9,52 @@ mass:
     mass of the particle in the box (must be in a.u.)
 pot_func:
     supply your own potential energy functional or use a preset functional (default = Particle in a Box (PIAB))
-    preset potentials include: 
+    preset potentials include:
         zero potential (PIAB)
         parabola (PARA)
 len_eigval:
     number of eigenvalues you would like to compute (default = 10)
 grid_points (optional):
     generates N+1 (default 101) gridpoints to numerically evaluate the SE
-unit (optional):
-    if set will convert energies to units from atomic (default = None)
-    availible options:
-        kJ/mol
-        J
-        eV
-plot (optional):
-    variable that can be set to True to plot out the solutions to the SE with respesct to the potential
+problem:
+    specify which problem to be solved, currently supports:
+        particle in a box: 'box'
+        Harmonic oscillator: 'HO'
 """
-
+from numpy.linalg import eig
 # load internal modules
-from .utilities import *
-from .hamiltonian import *
+from qwave.hamiltonian import calculate_kinetic, calculate_HO_potential, calculate_potential
+from qwave.utilities import ngrid, sort_energy, sort_wave
 
-def schrodinger_solution(box_length, mass, pot_func='PIAB', fit_type='not-a-knot',
+
+def schrodinger_solution(box_length: int, mass: float, pot_func='PIAB', fit_type='not-a-knot',
         grid_points=101, len_eigval=10, problem=None, frequency=None):
+
+    """
+    Calculate the energies and corresponding wavefunctions for the Schrodinger equation.
+    Parameters:
+        box_length: float
+        mass: float
+        pot_func: str
+        fit_type: str
+        grid_points: int
+        len_eigval: int
+        problem: str ('box' or 'HO')
+        frequency: float (required for 'HO')
+    Returns:
+        energies: np.ndarray
+        wavefunctions: np.ndarray
+    """
 
     grid, dgrid = ngrid(box_length, grid_points)
 
     C = -1/(2 * mass * dgrid**2)                        # evaluate the constant of the kinetic energy operator
 
     if 'box' in problem.lower():
-        V = calculate_potential(grid_points, grid, box_length, pot_func, fit_type)  # evaluate the potential energy operator
+        V = calculate_potential(grid, pot_func, fit_type)  # evaluate the potential energy operator
 
     elif 'HO' in problem:
-        V = calculate_HO_potential(frequency, grid_points, grid, mass)
+        V = calculate_HO_potential(frequency, grid, mass)
 
     else:
         raise NotImplementedError(f'{problem} is not a valid problem')
@@ -49,9 +62,9 @@ def schrodinger_solution(box_length, mass, pot_func='PIAB', fit_type='not-a-knot
 
     H = (C*T) + V
 
-    eigval, eigvec = np.linalg.eig(H)                   # Diagonalize Hamiltonian for eigenvectors
+    eigval, eigvec = eig(H)                   # Diagonalize Hamiltonian for eigenvectors
 
-    energy = sort_energy(eigval, len_eigval)             # Sort the values from lowest to highest 
+    energy = sort_energy(eigval, len_eigval)             # Sort the values from lowest to highest
     wavefunc = sort_wave(energy, eigval, eigvec)
 
     return energy, wavefunc

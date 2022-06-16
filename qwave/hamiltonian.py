@@ -7,17 +7,10 @@ Functions to evaluate the kinetic and potential energy functions
 
 # import modules
 import numpy as np
-from scipy import constants
+from qwave.units import s_cm, B_m, au_kg, j_ev, ev_h
 
 #import internal modules
-from .utilities import *
-
-s_cm = constants.physical_constants['speed of light in vacuum'][0] *100
-B_m = constants.physical_constants['Bohr radius'][0]
-j_ev = constants.physical_constants['joule-electron volt relationship'][0]
-ev_h = constants.physical_constants['electron volt-hartree relationship'][0]
-am_kg = constants.physical_constants['atomic mass constant'][0]
-au_kg = constants.physical_constants['atomic unit of mass'][0]
+from qwave.utilities import pes
 
 def calculate_kinetic(grid_points: int) -> np.ndarray:
     """
@@ -42,30 +35,35 @@ def calculate_kinetic(grid_points: int) -> np.ndarray:
 
     return T
 
-def calculate_potential(grid_points: int, grid, box_length, potential_func, fit_type) -> np.ndarray:
+def calculate_potential(grid: np.ndarray, potential_func: str, fit_type: str) -> np.ndarray:
     """
     Calculate the Potential Energy Matirix.
     Parameters:
         grid_points: int
         grid: np.ndarray
-        box_length: float
         potential_func: str
         fit_type: str
     Returns:
-        V: np.ndarray          
+        V: np.ndarray (diagonal matrix)
     """
-    V = np.zeros((grid_points, grid_points))
 
-    for i in range(grid_points):
-        V[i,i] = pes(potential_func, grid[i], fit_type)
-    return V
+    V = [ pes(potential_func, grid_point, fit_type) for grid_point in grid[:-1] ]
+
+    return np.diag(V)
 
 
-def calculate_HO_potential(frequency, grid_points, grid, mass):
-    V = np.zeros((grid_points, grid_points))
-            
-    for i in range(grid_points):
-        V[i,i] = (2*np.pi**2)*(frequency**2)*(s_cm**2)*(grid[i]**2)*\
-                    ((B_m)**2)*mass*(au_kg)*j_ev*ev_h
+def calculate_HO_potential(frequency: float, grid: np.ndarray, mass: float) -> np.ndarray:
+    """
+    Calculate the potential energy matrix for a harmonic oscillator.
+    Parameters:
+        frequency: float
+        grid_points: int
+        grid: np.ndarray
+        mass: float
+    Returns:
+        V: np.ndarray (diagonal matrix)
+    """         
 
-    return V
+    V = [(2*np.pi**2)*(frequency**2)*(s_cm**2)*(grid_point**2)*\
+        ((B_m)**2)*mass*(au_kg)*j_ev*ev_h for grid_point in grid[:-1] ]
+    return np.diag(V)
