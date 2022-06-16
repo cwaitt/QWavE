@@ -30,14 +30,18 @@ plot (optional):
 from .utilities import *
 from .hamiltonian import *
 
-def schrodinger_box(box_length,mass,pot_func='PIAB',fit_type='not-a-knot',
-        grid_points=101,len_eigval=10):
+def schrodinger_solution(box_length, mass, pot_func='PIAB', fit_type='not-a-knot',
+        grid_points=101, len_eigval=10, problem=None, frequency=None):
 
-    grid,dgrid = ngrid(box_length,grid_points)
+    grid, dgrid = ngrid(box_length, grid_points)
 
-    C = -1/(2*mass*dgrid**2)                        # evaluate the constant of the kinetic energy operator
+    C = -1/(2 * mass * dgrid**2)                        # evaluate the constant of the kinetic energy operator
 
-    V = calculate_potential(grid_points,grid,box_length,pot_func,fit_type)  # evaluate the potential energy operator
+    if 'box' in problem.lower():
+        V = calculate_potential(grid_points, grid, box_length, pot_func, fit_type)  # evaluate the potential energy operator
+
+    elif 'HO' in problem:
+        V = calculate_HO_potential(frequency, grid_points, grid, mass)
 
     T = calculate_kinetic(grid_points)                           # evaluate the kinetic energy operator
 
@@ -45,27 +49,7 @@ def schrodinger_box(box_length,mass,pot_func='PIAB',fit_type='not-a-knot',
 
     eigval, eigvec = np.linalg.eig(H)                   # Diagonalize Hamiltonian for eigenvectors
 
-    energy = sort_energy(eigval,len_eigval)             # Sort the values from lowest to highest 
-    wavefunc = sort_wave(energy,eigval,eigvec)
+    energy = sort_energy(eigval, len_eigval)             # Sort the values from lowest to highest 
+    wavefunc = sort_wave(energy, eigval, eigvec)
 
     return energy, wavefunc
-  
-def schrodinger_HO(box_length,mass,frequency,
-        grid_points=101,len_eigval=10):
-
-    grid,dgrid = ngrid(box_length,grid_points)
-
-    C = -1/(2*mass*dgrid**2)
-
-    V = calculate_HO_potential(frequency,grid_points,grid,mass)
-
-    T = calculate_kinetic(grid_points)
-
-    H = (C*T) + V
-
-    eigval, eigvec = np.linalg.eig(H)
-
-    energy = sort_energy(eigval,len_eigval)
-    wavefunc = sort_wave(energy,eigval,eigvec)
-
-    return np.array(energy), np.array(wavefunc)

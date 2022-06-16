@@ -3,9 +3,9 @@ partition_func.py
 A statistcal mechanics solver to evaluate the parition function given a collection of eigen states
 
 Handles the primary functions
-q: 
+q:
     list of eigen values from schroginger equation
-temp: 
+temp:
     array of temperatures to evaluate partition function
 volume:
     array of volumes to evaluate partition function
@@ -24,14 +24,11 @@ from .utilities import *
 
 kb_default = constants.physical_constants['kelvin-hartree relationship'][0]
 
-def free_A(q,temp,kb):
-
-    A = -1*kb*temp*np.log(q)
-
-    return A
+def free_A(q, temperature, kb):
+    return -kb * temperature * np.log(q)
 
 
-def free_A_S(q,temp,unit):
+def free_A_S(q, temperature, unit):
 
     if unit == 'Hartree':
         kb = constants.physical_constants['Boltzmann constant in eV/K'][0]/constants.physical_constants['Hartree energy in eV'][0]
@@ -49,36 +46,27 @@ def free_A_S(q,temp,unit):
         raise ValueError('Unit must be Hartree, eV, J, or kJ/mol')
 
 
-    A = -1*kb*temp*np.log(q)
+    A = free_A(q, temperature, kb)
 
-    cs = CubicSpline(temp,A)
+    cubic_spline = CubicSpline(temperature, A)
 
-    S = []
-    for i in temp:
-        S.append(derivative(cs,i)*-1)
-    
-    S = np.array(S)
+    S = np.array([-derivative(cubic_spline, temp) for temp in temperature])
 
-    return A,S
+    return A, S
 
-def free_A_p(q,temp,volume,unit='J'):
+def free_A_p(q, temperature, volume, unit='J'):
 
     if unit == 'J':
         kb = constants.physical_constants['Boltzmann constant'][0]
-
     else:
         raise ValueError('Module designed only if free energy is in Joules')
 
+    A = free_A(q, temperature, kb)
 
-    A = -1*kb*temp*np.log(q)
+    cubic_spline = CubicSpline(temperature, A)
 
-    cs = CubicSpline(temp,A)
+    p = np.array([derivative(cubic_spline,vol) for vol in volume])
 
-    p = []
-    for i in volume:
-        p.append(derivative(cs,i)*-1)
-    
-
-    return A,p
+    return A, p
 
    

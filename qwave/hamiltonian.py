@@ -10,7 +10,7 @@ import numpy as np
 from scipy import constants
 
 #import internal modules
-from utilities import *
+from .utilities import *
 
 s_cm = constants.physical_constants['speed of light in vacuum'][0] *100
 B_m = constants.physical_constants['Bohr radius'][0]
@@ -25,7 +25,6 @@ def calculate_kinetic(grid_points: int) -> np.ndarray:
     Utilizes fourth-ordered central difference approximation.
     Parameters:
         grid_points: int
-            Number of grid points in the x and y directions.
     Returns:
         T np.ndarray
     """
@@ -43,12 +42,22 @@ def calculate_kinetic(grid_points: int) -> np.ndarray:
 
     return T
 
-def calculate_potential(grid_points, grid,box_length, pot_func, fit_type):
+def calculate_potential(grid_points: int, grid, box_length, potential_func, fit_type) -> np.ndarray:
+    """
+    Calculate the Potential Energy Matirix.
+    Parameters:
+        grid_points: int
+        grid: np.ndarray
+        box_length: float
+        potential_func: str
+        fit_type: str
+    Returns:
+        V: np.ndarray          
+    """
     V = np.zeros((grid_points, grid_points))
 
     for i in range(grid_points):
-        V[i,i] = pes(pot_func, grid[i], box_length, fit_type)
-            
+        V[i,i] = pes(potential_func, grid[i], fit_type)
     return V
 
 
