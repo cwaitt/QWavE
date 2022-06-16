@@ -43,6 +43,8 @@ def schrodinger_solution(box_length, mass, pot_func='PIAB', fit_type='not-a-knot
     elif 'HO' in problem:
         V = calculate_HO_potential(frequency, grid_points, grid, mass)
 
+    else:
+        raise NotImplementedError(f'{problem} is not a valid problem')
     T = calculate_kinetic(grid_points)                           # evaluate the kinetic energy operator
 
     H = (C*T) + V
