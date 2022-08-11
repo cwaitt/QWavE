@@ -2,10 +2,10 @@
 statistics.py
 A python module that evaluates the Boltzmann statistics from the partition function
 
-eig:
-    array of eigenvalues from the schrodinger equation
+energy:
+    selected eigenvalue from the schrodinger equation
 
-part:
+partition_function:
     array corresponding to the value of the partition function at temperature T
 
 temp:
@@ -20,28 +20,54 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 
 # load internal modules
-from .utilities import *
+from qwave.utilities import derivative
 
-def bolt_prob(eig,num,part,temp,kb):
+def boltzmann_probability(energy: float, partition_function: float, temperature: float, kb: float) -> float:
+    """
+    Calculate the probability of a particular state based on its energy,
+    given the Boltzmann distribution.
+    Parameters
+    ----------
+    energy : float
+        Energy of the state.
+    partition_function : float
+        Partition function of the system.
+    temperature : float
+        Temperature of the system.
+    kb : float
+        Boltzmann constant (in same units as energy).
+    """
 
-    state = np.exp(-eig[num]/(kb*temp))
-    prob = state/part
+    beta = 1/(kb * temperature)
+
+    state = np.exp(-beta * energy)
+    prob = state/partition_function
 
     return prob
 
-def avg_energy(part,temp,kb):
+def average_energy(partition_function: np.ndarray, temperature: float, kb: float):
+    """
+    Calculate the average energy of a system by using the partition function.
+    Parameters
+    ----------
+    partition_function : float
+        Partition function of the system.
+    temperature : float
+        Temperature of the system.
+    kb : float
+        Boltzmann constant (in same units as energy).
+    """
 
-    beta = np.flipud(1/(kb*temp))
-    lnq = np.flipud(np.log(part))
+    beta = np.flipud(1/(kb*temperature))
+    lnq = np.flipud(np.log(partition_function))
     cs = CubicSpline(beta,lnq)
 
-    E = np.flipud(-1*derivative(cs,beta))
+    E = np.flipud(-derivative(cs,beta))
     
-    cs = CubicSpline(temp,E)
+    cs = CubicSpline(temperature,E)
 
-    cv = derivative(cs,temp)
+    cv = derivative(cs,temperature)
 
-    variance = cv * kb*(temp**2)
+    variance = cv * kb*(temperature**2)
 
     return E, variance, cv
-

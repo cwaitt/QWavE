@@ -3,27 +3,25 @@ partition_func.py
 A statistcal mechanics solver to evaluate the parition function given a collection of eigen states
 
 Handles the primary functions
-ei: 
+ei:
     list of eigen values from schroginger equation
-temp: 
+temp:
     array of temperatures to evaluate partition function
 """
 # load modules
-from scipy import constants
 import numpy as np
+from qwave.units import kb_unit_dict, h_unit_dict, eV_to_J, c, bohr_to_m
 
-kb_default = constants.physical_constants['kelvin-hartree relationship'][0]
-eV_to_J = constants.physical_constants['electron volt-joule relationship'][0]
-bohr_to_m = constants.physical_constants['Bohr radius'][0]
 
-def q_PESq(ei,temp,kb):
+def q_PESq(ei, temperatures, kb):
 
     q_tot = []
 
-    for i in temp:
+    for temperature in temperatures:
         q_temp = 0
-        for j in ei:
-            q_temp = np.exp(-j/(kb*i)) + q_temp
+        beta = 1/(kb * temperature)
+        for energy in ei:
+            q_temp += np.exp(-beta * energy)
 
         q_tot.append(q_temp)
 
@@ -31,31 +29,31 @@ def q_PESq(ei,temp,kb):
 
     return q_tot
 
-def q_HO(freq,temp,kb,h):
+def q_HO(frequency, temperatures, kb, h):
 
-    c = constants.physical_constants['speed of light in vacuum'][0]*100
+    log_q_tot = []
 
-    q_tot = []
+    for temperature in temperatures:
+        # q_temp = 0
 
-    for i in temp:
-        q_temp = 0
+        beta = kb * temperature
+        en_freq = -h * frequency * c
 
-        beta = kb*i
-        en_freq = -1*h*freq*c
+        log_q_temp = en_freq /(2*beta) - np.log(1-np.exp(en_freq/beta))
+        log_q_tot.append(log_q_temp)
 
-        q_temp = np.exp(en_freq/(2*beta)) / (1-np.exp(en_freq/beta))
-
-        q_tot.append(q_temp)
-
-    q_tot = np.array(q_tot)
+    log_q_tot = np.array(log_q_tot)
+    log_q_mean = np.mean(log_q_tot)
+    log_q_tot -= log_q_mean # This will help with the overflow errors
+    q_tot = np.exp(log_q_tot) * np.exp(log_q_mean)
 
     return q_tot
 
 def q_HT(Vb,ax,mass,temp,unit):
 
     if unit == 'eV':
-        kb = constants.physical_constants['Boltzmann constant in eV/K'][0]
-        h = constants.physical_constants['Planck constant in eV s'][0]
+        kb = kb_unit_dict['eV']
+        h = h_unit_dict['eV']
     else:
         raise ValueError('Unit must be eV')
 
@@ -85,30 +83,20 @@ def q_HT(Vb,ax,mass,temp,unit):
 
     return q_tot
 
-def q_rot(sigma, Ia, Ib, Ic, temp, unit):
-    
-    if unit == 'Hartree':
-        kb = constants.physical_constants['Boltzmann constant in eV/K'][0]/constants.physical_constants['Hartree energy in eV'][0]
-        h = -1*constants.physical_constants['Planck constant'][0]/constants.physical_constants['hartree-joule relationship'][0]
-    elif unit == 'eV':
-        kb = constants.physical_constants['Boltzmann constant in eV/K'][0]
-        h = -1*constants.physical_constants['Planck constant in eV s'][0]
-    elif unit == 'J':
-        kb = constants.physical_constants['Boltzmann constant'][0]  
-        h = -1*constants.physical_constants['Planck constant'][0]
-    elif unit == 'kJ/mol':
-        kb = constants.physical_constants['Boltzmann constant'][0]/1000*constants.N_A
-        h = -1*constants.physical_constants['Planck constant'][0]/1000*constants.N_A
-    else:
+def q_rot(sigma, Ia, Ib, Ic, temperatures, unit):
+
+    try:
+        kb = kb_unit_dict[unit]
+        h = h_unit_dict[unit]
+
+    except KeyError:
         raise ValueError('Unit must be Hartree, eV, J, or kJ/mol')
     
-    q_rot = []
+    q_rot_list = []
     
-    for i in temp:
-        #print(i)
-        q_temp = 0
+    for temperature in temperatures:
         
-        coeff = ((8 * (np.pi**2) * kb * i) / (h**2))
+        coeff = ((8 * (np.pi**2) * kb * temperature) / (h**2))
     
         term1 = np.sqrt(np.pi) / sigma
         term2 = np.sqrt(coeff * Ia)
@@ -117,6 +105,6 @@ def q_rot(sigma, Ia, Ib, Ic, temp, unit):
     
         q_temp = term1 * term2 * term3 * term4
         
-        q_rot = np.append(q_rot, q_temp)
+        q_rot_list.append(q_temp)
     
-    return q_rot
+    return q_rot_list
