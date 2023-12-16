@@ -5,25 +5,25 @@ QWavE
 
 ### Introduction
 
-QWavE is a python based program designed to solve the 1 dimensional Schrodinger Equation (S.E), and use the solutions from the S.E. to evaluate thermodynamic properties. The intent of this software is t:
+QWavE is a python based program designed to solve the 1 and 2 dimensional Schrodinger Equation (S.E), and use the solutions from the S.E. to evaluate thermodynamic properties. The intent of this software is to:
 
 1) Provide teachers/educators a simple and cohesive set of python modules to visulaize the solutions of the time-independent S.E.
 2) Give students an opportunity to solve simple quantum mechanical problems without the need to code large, complex, notebooks, as well as there extensions to statistical mechanics.
-3) Provide researchers a tool to convert measurable quantities (usually obtaied from density functional theory) into other usefull properties.
+3) Provide researchers a tool to convert measurable quantities (usually obtaied from quantum mechanical computation) into other usefull properties.
 
 ### Installation
 QWavE is fairly simple to install. 
 1) Fork the repository to your own Github account
 2) Clone your repository to your local environment
 3) Place a copy of QWavE onto your python path
-4) To use any QWavE module, simply type "from QWavE import qwave" and all the modules should be available to you
+4) To use any QWavE module, simply type "from QWavE.qwave import {desired module}" 
 
 ### Usage
-QWavE has been designed for ease of use. Several example on how to use the modules are shown via juypter notebooks. QWave is not complete as more modules are being added.
+QWavE has been designed for ease of use. Several example on how to use the modules are shown via juypter notebooks. QWavE is not complete as more modules are being added.
 
 ### Copyright
 
-Copyright (c) 2021, Craig Waitt, Audrey Miles
+Copyright (c) 2023, Craig Waitt, Audrey Miles
 
 
 #### Acknowledgements

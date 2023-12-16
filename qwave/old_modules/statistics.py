@@ -20,7 +20,7 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 
 # load internal modules
-from qwave.utilities import derivative
+from .utilities import derivative
 
 def boltzmann_probability(energy: float, partition_function: float, temperature: float, kb: float) -> float:
     """
